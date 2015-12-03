@@ -5,4 +5,5 @@ val humbugVersion  = "0.6.1-20151008040202-1f0ccb9"
 
 addSbtPlugin("au.com.cba.omnia" % "uniform-core"       % uniformVersion)
 addSbtPlugin("au.com.cba.omnia" % "uniform-dependency" % uniformVersion)
+addSbtPlugin("au.com.cba.omnia" % "uniform-assembly"   % uniformVersion)
 addSbtPlugin("au.com.cba.omnia" % "humbug-plugin"      % humbugVersion)
