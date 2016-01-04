@@ -42,10 +42,11 @@ case class AuditionJobConfig[T <: ThriftStruct : ThriftN : Manifest](config: Con
     domain    = "test",
     tablename = "test"
   )
-  val nPartitions   = config.getArgs.int("num-partitions")
-  val partitionSize = config.getArgs.int("partition-size")
-  val batchSize     = config.getArgs.int("batch-size")
-  val withQueries   = config.getArgs.boolean("with-queries")
+  val nPartitions     = config.getArgs.int("num-partitions")
+  val partitionSize   = config.getArgs.int("partition-size")
+  val partitionOffset = config.getArgs.int("partition-offset")
+  val batchSize       = config.getArgs.int("batch-size")
+  val withQueries     = config.getArgs.boolean("with-queries")
   
   val table = maestro.partitionedHiveTable[T, Int](
     partition = implicitly[ThriftN[T]].partition,
@@ -72,7 +73,7 @@ object AuditionJob extends MaestroJob {
     def createExecutions: Stream[Execution[Long]] = {
       val nRecords  = conf.partitionSize * conf.nPartitions
       val batchSize = math.min(conf.batchSize, nRecords)
-      Stream.from(0, batchSize)
+      Stream.from(conf.partitionOffset, batchSize)
         .map(createPipe(batchSize, _, conf.partitionSize))
         .map(viewHive(conf.table, _))
         .take(nRecords / batchSize)
